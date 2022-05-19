@@ -8,6 +8,7 @@ import {
   TableRow,
   TableCell,
   Paper,
+  CircularProgress,
 } from "@mui/material";
 import { withStyles } from "@mui/styles";
 import { createTheme } from "@mui/system";
@@ -21,20 +22,34 @@ const styles = () => ({
   table: {
     minWidth: 1080,
   },
+  progress: {
+    margin: createTheme().spacing(2),
+  },
 });
 
 const App = ({ classes }) => {
   const [customers, setCustomers] = useState([]);
+  const [completed, setCompleted] = useState(0);
 
   const callApi = async () => {
     const response = await fetch("/api/customers");
     const body = await response.json();
-    console.log(body);
     return body;
   };
 
   useEffect(() => {
-    callApi().then((data) => setCustomers(data));
+    let percentage = 0;
+    setInterval(() => {
+      if (percentage >= 200) {
+        percentage = 0;
+      } else {
+        percentage = percentage + 1;
+      }
+      setCompleted(percentage);
+    }, 20);
+    callApi()
+      .then((data) => setCustomers(data))
+      .catch((err) => console.log(err));
   }, []);
 
   return (
@@ -51,17 +66,31 @@ const App = ({ classes }) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {customers.map((c) => (
-            <Customer
-              key={c.id}
-              id={c.id}
-              image={c.image}
-              name={c.name}
-              birthday={c.birthday}
-              gender={c.gender}
-              job={c.job}
-            />
-          ))}
+          {customers.length != 0 ? (
+            customers.map((c) => (
+              <Customer
+                key={c.id}
+                id={c.id}
+                image={c.image}
+                name={c.name}
+                birthday={c.birthday}
+                gender={c.gender}
+                job={c.job}
+              />
+            ))
+          ) : (
+            <>
+              <TableRow>
+                <TableCell>
+                  <CircularProgress
+                    className={classes.progress}
+                    variant="determinate"
+                    value={completed}
+                  />
+                </TableCell>
+              </TableRow>
+            </>
+          )}
         </TableBody>
       </Table>
     </Paper>
