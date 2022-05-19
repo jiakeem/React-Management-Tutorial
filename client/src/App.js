@@ -66,7 +66,7 @@ const App = ({ classes }) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {customers.length != 0 ? (
+          {customers.length !== 0 ? (
             customers.map((c) => (
               <Customer
                 key={c.id}
