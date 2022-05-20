@@ -1,13 +1,28 @@
 import React, { useState } from "react";
 import { post } from "axios";
+import {
+  Dialog,
+  DialogActions,
+  DialogTitle,
+  DialogContent,
+  TextField,
+  Button,
+} from "@mui/material";
+import { withStyles } from "@mui/styles";
 
-const CustomerAdd = ({ stateRefresh }) => {
+const styles = () => ({
+  hidden: {
+    display: "none",
+  },
+});
+const CustomerAdd = ({ classes, stateRefresh }) => {
   const [file, setFile] = useState(null);
   const [userName, setUserName] = useState("");
   const [birthday, setBirthday] = useState("");
   const [gender, setGender] = useState("");
   const [job, setJob] = useState("");
   const [fileName, setFileName] = useState("");
+  const [open, setOpen] = useState(false);
 
   const handleFormSubmit = (event) => {
     event.preventDefault();
@@ -21,11 +36,14 @@ const CustomerAdd = ({ stateRefresh }) => {
     setGender("");
     setJob("");
     setFileName("");
+    setOpen(false);
   };
+
   const handleFileChange = (event) => {
     setFile(event.target.files[0]);
     setFileName(event.target.value);
   };
+
   const handleValueChange = (event) => {
     if (event.target.name === "userName") {
       setUserName(event.target.value);
@@ -36,6 +54,20 @@ const CustomerAdd = ({ stateRefresh }) => {
     } else {
       setJob(event.target.value);
     }
+  };
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClickClose = () => {
+    setFile(null);
+    setUserName("");
+    setBirthday("");
+    setGender("");
+    setJob("");
+    setFileName("");
+    setOpen(false);
   };
 
   const addCustomer = () => {
@@ -55,47 +87,80 @@ const CustomerAdd = ({ stateRefresh }) => {
   };
 
   return (
-    <form onSubmit={handleFormSubmit}>
-      <h1>고객 추가</h1>
-      프로필 이미지 :{" "}
-      <input
-        type="file"
-        name="file"
-        file={file}
-        value={fileName}
-        onChange={handleFileChange}
-      />
-      <br />
-      이름:{" "}
-      <input
-        type="text"
-        name="userName"
-        value={userName}
-        onChange={handleValueChange}
-      />
-      <br />
-      생년원일:
-      <input
-        type="text"
-        name="birthday"
-        value={birthday}
-        onChange={handleValueChange}
-      />
-      <br />
-      성별:
-      <input
-        type="text"
-        name="gender"
-        value={gender}
-        onChange={handleValueChange}
-      />
-      <br />
-      직업:
-      <input type="text" name="job" value={job} onChange={handleValueChange} />
-      <br />
-      <button type="submit">추가하기</button>
-    </form>
+    <div>
+      <Button variant="contained" color="primary" onClick={handleClickOpen}>
+        고객 추가하기
+      </Button>
+      <Dialog open={open} onClose={handleClickClose}>
+        <DialogTitle>고객 추가</DialogTitle>
+        <DialogContent>
+          <input
+            className={classes.hidden}
+            accept="image/*"
+            id="raised-button-file"
+            type="file"
+            file={file}
+            value={fileName}
+            onChange={handleFileChange}
+          />
+          <label htmlFor="raised-button-file">
+            <Button
+              variant="contained"
+              color="primary"
+              component="span"
+              name="file"
+            >
+              {fileName === "" ? "프로필 이미지 선택" : fileName}
+            </Button>
+          </label>
+          <br />
+          <TextField
+            label="이름"
+            type="text"
+            name="userName"
+            value={userName}
+            onChange={handleValueChange}
+          />
+          <br />
+          <TextField
+            label="생년월일"
+            type="text"
+            name="birthday"
+            value={birthday}
+            onChange={handleValueChange}
+          />
+          <br />
+          <TextField
+            label="성별"
+            type="text"
+            name="gender"
+            value={gender}
+            onChange={handleValueChange}
+          />
+          <br />
+          <TextField
+            label="직업"
+            type="text"
+            name="job"
+            value={job}
+            onChange={handleValueChange}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleFormSubmit}
+          >
+            추가
+          </Button>
+          <Button variant="outlined" color="primary" onClick={handleClickClose}>
+            닫기
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </div>
   );
 };
 
-export default CustomerAdd;
+export default withStyles(styles)(CustomerAdd);

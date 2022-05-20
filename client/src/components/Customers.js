@@ -7,7 +7,7 @@ const Customer = ({ id, image, name, birthday, gender, job, stateRefresh }) => {
     <TableRow>
       <TableCell>{id}</TableCell>
       <TableCell>
-        <img src={image} alt="profile" />
+        <img src={image} alt="profile" style={{ height: "150px" }} />
       </TableCell>
       <TableCell>{name}</TableCell>
       <TableCell>{birthday}</TableCell>
