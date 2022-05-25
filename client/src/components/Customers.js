@@ -1,5 +1,6 @@
 import React from "react";
-import { TableRow, TableCell } from "@mui/material";
+import TableRow from "@material-ui/core/TableRow";
+import TableCell from "@material-ui/core/TableCell";
 import CustomerDelete from "./CustomerDelete";
 
 const Customer = ({ id, image, name, birthday, gender, job, stateRefresh }) => {
