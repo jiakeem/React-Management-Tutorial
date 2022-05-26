@@ -99,10 +99,22 @@ const styles = (theme) => ({
 const App = ({ classes }) => {
   const [customers, setCustomers] = useState([]);
   const [completed, setCompleted] = useState(0);
+  const [searchKeyword, setSearchKeyword] = useState("");
+
+  const cellList = [
+    "번호",
+    "이미지",
+    "이름",
+    "생년월일",
+    "성별",
+    "직업",
+    "설정",
+  ];
 
   const stateRefresh = () => {
     setCustomers([]);
     setCompleted(0);
+    setSearchKeyword("");
     callApi()
       .then((data) => setCustomers(data))
       .catch((err) => console.log(err));
@@ -128,6 +140,30 @@ const App = ({ classes }) => {
       .then((data) => setCustomers(data))
       .catch((err) => console.log(err));
   }, []);
+
+  const handleValueChange = (e) => {
+    setSearchKeyword(e.target.value);
+  };
+
+  const filteredComponents = (data) => {
+    data = data.filter((c) => {
+      return c.name.indexOf(searchKeyword) > -1;
+    });
+    return data.map((c) => {
+      return (
+        <Customer
+          key={c.id}
+          id={c.id}
+          image={c.image}
+          name={c.name}
+          birthday={c.birthday}
+          gender={c.gender}
+          job={c.job}
+          stateRefresh={stateRefresh}
+        />
+      );
+    });
+  };
 
   return (
     <div className={classes.root}>
@@ -159,37 +195,28 @@ const App = ({ classes }) => {
                 root: classes.inputRoot,
                 input: classes.inputInput,
               }}
+              name="searchKeyword"
+              value={searchKeyword}
+              onChange={handleValueChange}
             />
           </div>
         </Toolbar>
       </AppBar>
-      <Paper>
+      <div className={classes.menu}>
+        <CustomerAdd stateRefresh={stateRefresh} />
+      </div>
+      <Paper className={classes.paper}>
         <Table className={classes.table}>
           <TableHead>
             <TableRow>
-              <TableCell>번호</TableCell>
-              <TableCell>이미지</TableCell>
-              <TableCell>이름</TableCell>
-              <TableCell>생년월일</TableCell>
-              <TableCell>성별</TableCell>
-              <TableCell>직업</TableCell>
-              <TableCell>설정</TableCell>
+              {cellList.map((c) => {
+                return <TableCell className={classes.tableHead}>{c}</TableCell>;
+              })}
             </TableRow>
           </TableHead>
           <TableBody>
             {customers.length !== 0 ? (
-              customers.map((c) => (
-                <Customer
-                  key={c.id}
-                  id={c.id}
-                  image={c.image}
-                  name={c.name}
-                  birthday={c.birthday}
-                  gender={c.gender}
-                  job={c.job}
-                  stateRefresh={stateRefresh}
-                />
-              ))
+              filteredComponents(customers)
             ) : (
               <>
                 <TableRow>
@@ -206,7 +233,6 @@ const App = ({ classes }) => {
           </TableBody>
         </Table>
       </Paper>
-      <CustomerAdd stateRefresh={stateRefresh} />
     </div>
   );
 };

@@ -3,6 +3,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
+import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 
 // const root = ReactDOM.createRoot(document.getElementById("root"));
 // root.render(
@@ -11,4 +12,14 @@ import App from "./App";
 //   </React.StrictMode>
 // );
 
-ReactDOM.render(<App />, document.getElementById("root"));
+const theme = createMuiTheme({
+  typography: {
+    fontFamily: '"Noto Sans KR", serif',
+  },
+});
+ReactDOM.render(
+  <MuiThemeProvider theme={theme}>
+    <App />
+  </MuiThemeProvider>,
+  document.getElementById("root")
+);
